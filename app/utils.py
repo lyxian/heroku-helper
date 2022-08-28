@@ -7,11 +7,12 @@ def getToken():
     return Fernet(key).decrypt(encrypted).decode()
 
 import yaml
-def getCurrLoc(*args):
-    if not args and os.path.exists('secrets.yaml'):
-        with open('secrets.yaml', 'r') as file:
-            yamlData = yaml.safe_load(file)
-        return yamlData
+def loadConfig():
+    configPath = 'secrets.yaml'
+    if os.path.exists(configPath):
+        with open(configPath) as file:
+            data = yaml.safe_load(file)
+        return data
     else:
         return {}
 

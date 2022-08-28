@@ -2,15 +2,13 @@ from flask import Flask, request
 import threading
 import telebot
 import time
-import sys
 import os
 
+from utils import loadConfig
 from bot import createBot
 
-if len(sys.argv) == 2:
-    DEBUG_MODE = eval(sys.argv[1])
-else:
-    DEBUG_MODE = True
+configVars = loadConfig()
+DEBUG_MODE = os.environ.get("DEBUG_MODE", True)
 
 app = Flask(__name__)
 bot = createBot()
@@ -30,7 +28,7 @@ def stop():
                 print("--End--")
             except:
                 pass
-            return {'status': 'OK'}, 204
+            return {'status': 'OK'}, 201
         else:
             return {'ERROR': 'Wrong password!'}, 400
     else:
@@ -41,7 +39,29 @@ def getMessage():
     bot.process_new_updates(
         [telebot.types.Update.de_json(request.stream.read().decode("utf-8"))]
     )
-    return {'status': 'OK'}, 204
+    return {'status': 'OK'}, 201
+
+@app.route('/getPass', methods=['POST'])
+def _getPass():
+    if request.method == 'POST':
+        required = ['app', 'password', 'key']
+        password = os.getenv('PASSWORD') if not configVars else configVars['PASSWORD']
+        if sorted(required) == sorted(request.json) and request.json['password'] == int(password):
+            if request.json['app'] in configVars['encryptionStore']:
+                appConfig = configVars['encryptionStore'][request.json['app']]
+                if request.json['key'] == int(appConfig['PASSWORD']):
+                    return {
+                        'status': 'OK',
+                        'KEY': appConfig['KEY']
+                    }, 201
+                else:
+                    return {'ERROR': 'Wrong password and parameters!'}, 401
+            else:
+                return {'ERROR': 'App not found in list!'}, 404
+        else:
+            return {'ERROR': 'Wrong password and parameters!'}, 401
+    else:
+        return {'ERROR': 'Nothing here!'}, 404
 
 @app.route("/", methods=["GET", "POST"])
 def webhook():
@@ -69,7 +89,7 @@ def start():
         return
 
 if __name__ == "__main__":
-    startThread = threading.Thread(target=start, daemon=True)
-    startThread.start() # .join
+    # startThread = threading.Thread(target=start, daemon=True)
+    # startThread.start() # .join
     
     app.run(debug=DEBUG_MODE, host="0.0.0.0", port=int(os.environ.get("PORT", 5005)))
