@@ -16,5 +16,7 @@ def createBot():
         bot.send_message(message.chat.id, text=START_MESSAGE)
         # bot.send_message(message.chat.id, text, reply_markup=createMarkup())
 
+    return bot
+
 if __name__ == "__main__":
     bot = createBot()

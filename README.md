@@ -4,6 +4,7 @@ Features:
 
 - webserver to serve requests
 - send exceptions from other telebots to user
+- encryption key store
 
 Requires:
 
