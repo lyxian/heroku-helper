@@ -26,5 +26,5 @@ pendulum
 apscheduler
 cryptography
 PyTelegramBotAPI
-
+pytest==7.1.2
 ##Packages
