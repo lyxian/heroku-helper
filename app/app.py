@@ -3,17 +3,16 @@ import telebot
 import time
 import os
 
-from utils import loadConfig, loadSecrets
+from utils import loadSecrets
 from bot import createBot
 
-configVars = loadSecrets() #loadConfig()
+configVars = loadSecrets()
 DEBUG_MODE = os.environ.get("DEBUG_MODE", True)
 
 app = Flask(__name__)
+
 bot = createBot()
-
 weburl = os.getenv("PUBLIC_URL") + bot.token
-
 print(weburl)
 
 @app.route("/stop", methods=["GET", "POST"])

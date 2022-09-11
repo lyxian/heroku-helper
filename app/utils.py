@@ -25,7 +25,7 @@ def encryptSecrets(silent=True):
         encrypted = Fernet(key).encrypt(data).decode()
         os.environ['SECRET_YAML'] = encrypted
         if not silent:
-            return f'SECERT_YAML={encrypted}'
+            return f'SECRET_YAML={encrypted}'
         return
     else:
         raise Exception('No secrets.yaml found ..')
@@ -39,3 +39,4 @@ def loadSecrets():
 
 if __name__ == '__main__':
     print(encryptSecrets(silent=False))
+    # print(loadSecrets())
