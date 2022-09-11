@@ -3,10 +3,10 @@ import telebot
 import time
 import os
 
-from utils import loadConfig
+from utils import loadConfig, loadSecrets
 from bot import createBot
 
-configVars = loadConfig()
+configVars = loadSecrets() #loadConfig()
 DEBUG_MODE = os.environ.get("DEBUG_MODE", True)
 
 app = Flask(__name__)
