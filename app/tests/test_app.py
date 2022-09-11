@@ -23,6 +23,7 @@ def payload():
 
 @pytest.fixture
 def verbose():
+    '''Returns default verbose setting'''
     return False
 
 def test_app_getPass_success(payload, verbose):
