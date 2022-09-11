@@ -1,5 +1,4 @@
 from flask import Flask, request
-import threading
 import telebot
 import time
 import os
@@ -41,7 +40,7 @@ def getMessage():
     )
     return {'status': 'OK'}, 201
 
-@app.route('/getPass', methods=['POST'])
+@app.route('/getPass', methods=['GET', 'POST'])
 def _getPass():
     if request.method == 'POST':
         required = ['app', 'password', 'key']
@@ -52,16 +51,23 @@ def _getPass():
                 if request.json['key'] == int(appConfig['PASSWORD']):
                     return {
                         'status': 'OK',
-                        'KEY': appConfig['KEY']
-                    }, 201
+                        'KEY': appConfig['KEY']}, 201
                 else:
-                    return {'ERROR': 'Wrong password and parameters!'}, 401
+                    return {
+                        'status': 'NOT_OK',
+                        'ERROR': 'Wrong password and parameters!'}, 401
             else:
-                return {'ERROR': 'App not found in list!'}, 404
+                return {
+                    'status': 'NOT_OK',
+                    'ERROR': 'App not found in list!'}, 404
         else:
-            return {'ERROR': 'Wrong password and parameters!'}, 401
+            return {
+                'status': 'NOT_OK',
+                'ERROR': 'Wrong password and parameters!'}, 401
     else:
-        return {'ERROR': 'Nothing here!'}, 404
+        return {
+            'status': 'NOT_OK',
+            'ERROR': 'Nothing here!'}, 404
 
 @app.route("/", methods=["GET", "POST"])
 def webhook():
@@ -89,7 +95,4 @@ def start():
         return
 
 if __name__ == "__main__":
-    # startThread = threading.Thread(target=start, daemon=True)
-    # startThread.start() # .join
-    
     app.run(debug=DEBUG_MODE, host="0.0.0.0", port=int(os.environ.get("PORT", 5005)))
