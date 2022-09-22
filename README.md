@@ -5,6 +5,8 @@ Features:
 - webserver to serve requests
 - send exceptions from other telebots to user
 - encryption key store
+  - authentication server
+  - authentication app
 
 Requires:
 
@@ -17,6 +19,11 @@ Requires:
 - server routes
 - telebot functions
 - test
+
+# TO-DO
+
+- dynamic url for heroku/local in test
+- error dashboard
 
 ##Packages (list required packages & run .scripts/python-pip.sh)
 flask

@@ -3,17 +3,16 @@ import telebot
 import time
 import os
 
-from utils import loadConfig
+from utils import loadSecrets
 from bot import createBot
 
-configVars = loadConfig()
+configVars = loadSecrets()
 DEBUG_MODE = os.environ.get("DEBUG_MODE", True)
 
 app = Flask(__name__)
+
 bot = createBot()
-
 weburl = os.getenv("PUBLIC_URL") + bot.token
-
 print(weburl)
 
 @app.route("/stop", methods=["GET", "POST"])
@@ -44,7 +43,7 @@ def getMessage():
 def _getPass():
     if request.method == 'POST':
         required = ['app', 'password', 'key']
-        password = os.getenv('PASSWORD') if not configVars else configVars['PASSWORD']
+        password = os.getenv('PASSWORD', configVars['PASSWORD'])
         if sorted(required) == sorted(request.json) and request.json['password'] == int(password):
             if request.json['app'] in configVars['encryptionStore']:
                 appConfig = configVars['encryptionStore'][request.json['app']]
@@ -71,7 +70,7 @@ def _getPass():
 
 @app.route("/", methods=["GET", "POST"])
 def webhook():
-    if request.method == 'GET':
+    if request.method != 'GET':
         bot.remove_webhook()
         try:
             bot.set_webhook(url=weburl)
