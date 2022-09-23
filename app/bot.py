@@ -35,7 +35,7 @@ class TelebotHelper:
         return response.json()
 
     def sendMessage(self, appName, logs, timeStamp):
-        formattedTime = pendulum.from_timestamp(timeStamp, tz='Asia/Singapore').format('DD-MMM-YYYY HH:MM:SS')
+        formattedTime = pendulum.from_timestamp(timeStamp, tz='Asia/Singapore').format('DD-MMM-YYYY HH:mm:ss')
         method = 'sendMessage'
         responses = {}
         for chatId in self.configVars['Telegram']['Admins']:
