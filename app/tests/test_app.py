@@ -2,7 +2,7 @@
 # - python -m pytest -p no:cacheprovider tests -sv
 # - pytest .. (if __init__.py exists in tests dir)
 
-from utils import loadConfig
+from utils import loadSecrets
 import requests
 import pytest
 from copy import deepcopy
@@ -10,7 +10,7 @@ from copy import deepcopy
 @pytest.fixture
 def payload():
     '''Returns valid payload for /getPass'''
-    configVars = loadConfig()
+    configVars = loadSecrets()
     testApp = list(configVars['encryptionStore'])[0]
     return {
         'url': 'http://{}:{}/getPass'.format(configVars['LOCALHOST'], configVars['PORT']),
