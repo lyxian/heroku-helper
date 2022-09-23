@@ -34,27 +34,20 @@ class TelebotHelper:
         # print(response.json())
         return response.json()
 
-    def sendMessage(self, message):
+    def sendMessage(self, appName, logs, timeStamp):
+        formattedTime = pendulum.from_timestamp(timeStamp, tz='Asia/Singapore').format('DD-MMM-YYYY HH:MM:SS')
         method = 'sendMessage'
         responses = {}
         for chatId in self.configVars['Telegram']['Admins']:
             params = {
                 'chat_id': chatId,
                 'parse_mode': 'HTML',
-                'text': message
+                'text': f'<i>[{formattedTime}]</i> <b>{appName}</b>\n{logs}'
             }
             response = self.callTelegramAPI(method, params)
             ### Convert chatId to username ###
             responses[chatId] = response
         return responses
-
-    def formatLogs(self, message):
-        # FORMAT
-        # [ <TIME> ] <APP>
-        # <LOGS>
-        dateTime, appName, logs = message
-
-        return f'<i>[{dateTime}]</i> <b>{appName}</b>\n{logs}'
 
 if __name__ == "__main__":
     bot = createBot()

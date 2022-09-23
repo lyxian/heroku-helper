@@ -76,7 +76,7 @@ def _postError():
                 appConfig = configVars['encryptionStore'][request.json['app']]
                 if request.json['key'] == int(appConfig['PASSWORD']):
                     # Send error logs to Telebot
-                    responses = telebotHelper.sendMessage(request.json['error'])
+                    responses = telebotHelper.sendMessage(request.json['app'], request.json['error'], time.time())
                     ERROR = []
                     for key in responses:
                         if not responses[key]['ok']:
