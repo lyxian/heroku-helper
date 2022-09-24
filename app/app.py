@@ -4,16 +4,14 @@ import time
 import os
 
 from utils import loadSecrets
-from bot import createBot
+from bot import createBot, TelebotHelper
 
 configVars = loadSecrets()
 DEBUG_MODE = os.environ.get("DEBUG_MODE", True)
 
 app = Flask(__name__)
-
 bot = createBot()
-weburl = os.getenv("PUBLIC_URL") + bot.token
-print(weburl)
+telebotHelper = TelebotHelper()
 
 @app.route("/stop", methods=["GET", "POST"])
 def stop():
@@ -68,12 +66,50 @@ def _getPass():
             'status': 'NOT_OK',
             'ERROR': 'Nothing here!'}, 404
 
+@app.route('/postError', methods=['GET', 'POST'])
+def _postError():
+    if request.method == 'POST':
+        required = ['app', 'password', 'key', 'error']
+        password = os.getenv('PASSWORD', configVars['PASSWORD'])
+        if sorted(required) == sorted(request.json) and request.json['password'] == int(password):
+            if request.json['app'] in configVars['encryptionStore']:
+                appConfig = configVars['encryptionStore'][request.json['app']]
+                if request.json['key'] == int(appConfig['PASSWORD']):
+                    # Send error logs to Telebot
+                    responses = telebotHelper.sendMessage(request.json['app'], request.json['error'], time.time())
+                    ERROR = []
+                    for key in responses:
+                        if not responses[key]['ok']:
+                            description = responses[key]['description']
+                            ERROR += [f'Failed to send error logs to \'{key}\' due to: {description}']
+                    if ERROR:
+                        return {'status': 'NOT_OK', 'ERROR': '\n'.join(ERROR)}, 401
+                    else:
+                        return {'status': 'OK'}, 201
+                else:
+                    return {
+                        'status': 'NOT_OK',
+                        'ERROR': 'Wrong password and parameters!'}, 401
+            else:
+                return {
+                    'status': 'NOT_OK',
+                    'ERROR': 'App not found in list!'}, 404
+        else:
+            return {
+                'status': 'NOT_OK',
+                'ERROR': 'Wrong password and parameters!'}, 401
+    else:
+        # Redirect to dashboard
+        return {
+            'status': 'NOT_OK',
+            'ERROR': 'Nothing here!'}, 404
+
 @app.route("/", methods=["GET", "POST"])
 def webhook():
     if request.method != 'GET':
         bot.remove_webhook()
         try:
-            bot.set_webhook(url=weburl)
+            bot.set_webhook(url=os.getenv("PUBLIC_URL") + bot.token)
             return {'status': 'Webhook set!'}, 204
         except:
             return {'status': 'Webhook not set...Try again...'}, 400
@@ -85,7 +121,7 @@ def start():
     time.sleep(2)
     print("Setting webhook...", end=" ")
     try:
-        bot.set_webhook(url=weburl)
+        bot.set_webhook(url=os.getenv("PUBLIC_URL") + bot.token)
         print("Webhook set!")
         return "Webhook set!"
     except Exception as e:

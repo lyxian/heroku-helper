@@ -17,7 +17,9 @@ Requires:
 **preprod**
 
 - server routes
+  - error logging
 - telebot functions
+  - error logging
 - test
 
 # TO-DO
