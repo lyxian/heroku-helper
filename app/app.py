@@ -83,7 +83,9 @@ def _postError():
                             description = responses[key]['description']
                             ERROR += [f'Failed to send error logs to \'{key}\' due to: {description}']
                     if ERROR:
-                        return {'status': 'NOT_OK', 'ERROR': '\n'.join(ERROR)}, 401
+                        ERRORS = '\n'.join(ERROR)
+                        print(f'=====APP ERROR=====\n{ERRORS}\n=====ERROR END=====')
+                        return {'status': 'NOT_OK', 'ERROR': ERRORS}, 401
                     else:
                         return {'status': 'OK'}, 200
                 else:
