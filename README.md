@@ -26,6 +26,15 @@ Requires:
 
 - dynamic url for heroku/local in test
 - error dashboard
+- check why '/' is not returning json
+  - 200 = OK
+  - 201 = Created
+  - 204 = No Content
+  - 400 = Bad Request
+  - 401 = Unauthorized
+  - 403 = Forbidden
+  - 404 = Not Found
+  - 405 = Method Not Allowed
 
 ##Packages (list required packages & run .scripts/python-pip.sh)
 flask

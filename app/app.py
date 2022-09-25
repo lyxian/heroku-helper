@@ -48,7 +48,7 @@ def _getPass():
                 if request.json['key'] == int(appConfig['PASSWORD']):
                     return {
                         'status': 'OK',
-                        'KEY': appConfig['KEY']}, 201
+                        'KEY': appConfig['KEY']}, 200
                 else:
                     return {
                         'status': 'NOT_OK',
@@ -85,7 +85,7 @@ def _postError():
                     if ERROR:
                         return {'status': 'NOT_OK', 'ERROR': '\n'.join(ERROR)}, 401
                     else:
-                        return {'status': 'OK'}, 201
+                        return {'status': 'OK'}, 200
                 else:
                     return {
                         'status': 'NOT_OK',
@@ -110,7 +110,7 @@ def webhook():
         bot.remove_webhook()
         try:
             bot.set_webhook(url=os.getenv("PUBLIC_URL") + bot.token)
-            return {'status': 'Webhook set!'}, 204
+            return {'status': 'Webhook set!'}, 200
         except:
             return {'status': 'Webhook not set...Try again...'}, 400
     else:
