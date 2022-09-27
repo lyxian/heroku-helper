@@ -3,9 +3,9 @@
 # - pytest .. (if __init__.py exists in tests dir)
 
 from utils import loadSecrets
+from copy import deepcopy
 import requests
 import pytest
-from copy import deepcopy
 
 @pytest.fixture
 def payload():

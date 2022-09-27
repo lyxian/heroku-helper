@@ -24,7 +24,7 @@ def stop():
                 print("--End--")
             except:
                 pass
-            return {'status': 'OK'}, 201
+            return {'status': 'OK'}, 200
         else:
             return {'ERROR': 'Wrong password!'}, 400
     else:
@@ -32,10 +32,14 @@ def stop():
 
 @app.route("/" + bot.token, methods=["POST"])
 def getMessage():
-    bot.process_new_updates(
-        [telebot.types.Update.de_json(request.stream.read().decode("utf-8"))]
-    )
-    return {'status': 'OK'}, 201
+    try:
+        bot.process_new_updates(
+            [telebot.types.Update.de_json(request.stream.read().decode("utf-8"))]
+        )
+        return {'status': 'OK'}, 200
+    except Exception as e:
+        print(f'Unable to process new message: {e}')
+        return {'status': 'NOT_OK'}, 400
 
 @app.route('/getPass', methods=['GET', 'POST'])
 def _getPass():
